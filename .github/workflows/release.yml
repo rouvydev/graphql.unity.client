@@ -1,0 +1,28 @@
+name: Release
+
+on: [workflow_dispatch]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com/'
+      - name: Generate metafiles
+        uses: rouvydev/metagen-gha@v1.4
+        with:
+          seed: 'KETaf5xEOytG2FZI5jbhO8Yl23RDJ4UE'
+          directory: ./rouvy.graphql.unity.client
+      - name: publish
+        working-directory: ./rouvy.graphql.unity.client
+        run: npm publish --registry='https://npm.pkg.github.com/@rouvydev'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
